@@ -1,0 +1,49 @@
+create database Tarea1;
+use Tarea1;
+
+CREATE table Hotel (
+   CodigoH	int primary key not null
+   , nombre	nvarchar(200) not null
+, direccion	nvarchar(1000) not null
+
+);
+
+CREATE table cliente (
+   identidad	int primary key not null
+   , nombre	nvarchar(200) not null
+, telefono	nvarchar(20) not null
+
+);
+
+ CREATE table recervas (
+    idreserva int primary key not null
+    ,CodigoH	int not null
+   ,identidad	int  not null
+   ,fechain date  not null
+   ,fechaout date not null
+ ,cantidad_personas int
+
+);
+alter table recervas add constraint FK_CodigoH foreign key (CodigoH) references Hotel(CodigoH);
+alter table recervas add constraint FK_Cliente foreign key (identidad) references cliente(identidad);
+alter table recervas add default 0 for cantidad_personas;
+
+ CREATE table Aereolinea (
+	codigo int primary key
+   ,descuennto	int  not null
+); 
+alter table Aereolinea add constraint CK_descuennto check(descuennto > = 10);
+
+
+CREATE table boleto (
+codigo int primary key
+,CodigoAe int
+   ,identidad	int  not null
+   ,n_vuelo int not null
+   ,fecha date not null
+ ,destino nvarchar(15)not null
+
+);
+alter table boleto add constraint FK_ClienteB foreign key (identidad) references cliente(identidad);
+alter table boleto add constraint FK_Aereoline foreign key (CodigoAe) references Aereolinea(codigo);
+alter table boleto add constraint CK_Destino check(destino in('Mexico','Guatemala','Panama'));
