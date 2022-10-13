@@ -1,0 +1,68 @@
+--1. Bloques Anónimos
+--A
+DECLARE
+CURSOR C1 IS SELECT first_name,last_name,salary from EMPLOYEES;
+BEGIN
+for i IN C1 LOOP
+        IF i.first_name='Peter' AND i.last_name='Tucker'
+            THEN
+                raise_application_error(-20300,'El salario del jefe no puede ser visto');
+                     ELSE
+                DBMS_OUTPUT.PUT_LINE(i.first_name ||' ' || i.last_name || ': '|| i.salary ||
+                    'DLS');
+         END IF;
+    END LOOP;
+END;
+--B
+DECLARE
+ CODIGO DEPARTMENTS.DEPARTMENT_ID%TYPE;
+  CURSOR C1(COD DEPARTMENTS.DEPARTMENT_ID%TYPE ) IS SELECT COUNT(*) FROM EMPLOYEES
+  WHERE DEPARTMENT_ID=COD;
+    NUM_EMPLE NUMBER;   
+BEGIN
+    CODIGO:=9;
+    OPEN C1(CODIGO);
+        FETCH C1 INTO NUM_EMPLE;
+        DBMS_OUTPUT.PUT_LINE('numero de empleados de ' ||codigo||' es
+        ' ||num_emple);
+end;
+
+DECLARE
+CURSOR C1 IS SELECT * FROM EMPLOYEES for update;
+begin
+for EMPLEADO IN C1 LOOP
+        IF EMPLEADO.SALARY > 8000 THEN
+         UPDATE EMPLOYEES SET SALARY=SALARY*1.02
+            WHERE CURRENT OF C1;
+         ELSE
+         UPDATE EMPLOYEES SET SALARY=SALARY*1.03
+         WHERE CURRENT OF C1;
+             END IF;
+         END LOOP;
+    COMMIT;
+END ;
+
+--2. Funciones
+
+create or replace FUNCTION CREAR_REGION (nombre varchar2)
+    RETURN NUMBER IS regiones NUMBER;NOM_REGION VARCHAR2(100);
+BEGIN
+
+SELECT REGION_NAME INTO NOM_REGION FROM REGIONS WHERE REGION_NAME=UPPER(NOMBRE);
+raise_application_error(-20321,'Esta región ya existe!');
+    EXCEPTION
+     WHEN NO_DATA_FOUND THEN
+    SELECT MAX(REGION_ID)+1 INTO REGIONES from REGIONS;
+    INSERT INTO REGIONS (region_id,region_name) VALUES (regiones,upper(nombre));
+    RETURN REGIONES;
+END;
+/
+--llamado de funcion 
+DECLARE
+N_REGION NUMBER;
+    BEGIN
+    N_REGION:=crear_region('ASGARTT');
+    DBMS_OUTPUT.PUT_LINE('EL NUMERO ASIGNADO ES:'||N_REGION);
+END;
+
+--3. Procedimientos
