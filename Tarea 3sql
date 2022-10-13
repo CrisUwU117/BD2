@@ -1,4 +1,4 @@
---1. Bloques Anónimos
+--1. Bloques AnÃ³nimos
 --A
 DECLARE
 CURSOR C1 IS SELECT first_name,last_name,salary from EMPLOYEES;
@@ -49,7 +49,7 @@ create or replace FUNCTION CREAR_REGION (nombre varchar2)
 BEGIN
 
 SELECT REGION_NAME INTO NOM_REGION FROM REGIONS WHERE REGION_NAME=UPPER(NOMBRE);
-raise_application_error(-20321,'Esta región ya existe!');
+raise_application_error(-20321,'Esta regiÃ³n ya existe!');
     EXCEPTION
      WHEN NO_DATA_FOUND THEN
     SELECT MAX(REGION_ID)+1 INTO REGIONES from REGIONS;
@@ -66,3 +66,21 @@ N_REGION NUMBER;
 END;
 
 --3. Procedimientos
+----4. Triggers
+--B
+CREATE TABLE AUDITORIA (
+USUARIO VARCHAR(50),
+FECHA DATE,
+SALARIO_ANTIGUO NUMBER,
+SALARIO_NUEVO NUMBER);
+
+CREATE TRIGGER T2 BEFORE INSERT ON REGIONS
+BEGIN
+INSERT INTO AUDITORIA (usuario, fecha)
+VALUES (user,sysdate);
+END;
+/
+
+INSERT INTO REGIONS VALUES (22,'Prueba');
+SELECT USER FROM DUAL;
+select * from auditoria;
