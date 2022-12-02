@@ -1,0 +1,16 @@
+1- SELECT
+  name, gender,
+  SUM(number) AS total
+FROM
+  `bigquery-public-data.usa_names.usa_1910_2013`
+GROUP BY
+  name, gender
+ORDER BY
+  total DESC
+  
+  2-SELECT
+  date,state, tests_total,cases_positive_total,SUM(tests_total) OVER (PARTITION BY state) as suma_total
+FROM
+  `bigquery-public-data.covid19_covidtracking.summary`
+
+3
