@@ -13,4 +13,29 @@ ORDER BY
 FROM
   `bigquery-public-data.covid19_covidtracking.summary`
 
-3
+3-
+    with channels as (
+        select
+    channelGrouping,
+    date,
+    sum(totals.pageviews) as pageviews
+  from `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
+    group by 
+    channelGrouping,
+    date 
+    )
+  select 
+  channelGrouping,
+  pageviews,
+  (pageviews / sum(pageviews) over()) as porcentaje,
+  avg(pageviews) over (partition by date) as Promedio
+from channels
+group by
+  channelGrouping,
+  pageviews, date
+  order by channels.pageviews desc;
+
+
+4-SELECT  region, Country Total_Revenue,
+  ROW_NUMBER() OVER(PARTITION BY region ORDER BY Total_Revenue desc) as rank,
+FROM `modern-cubist-369214.bd2_1.sales_records`
